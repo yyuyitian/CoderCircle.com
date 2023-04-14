@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Create a new event</title>
+</head>
+<body>
+	<h1>Create a new event</h1>
+
+	<form>
+		<label for="title">Title:</label>
+		<input type="text" id="title" name="title"><br>
+
+		<label for="date">Date:</label>
+		<input type="date" id="date" name="date"><br>
+
+		<label for="time">Time:</label>
+		<input type="time" id="time" name="time"><br>
+
+		<label for="location">Location:</label>
+		<input type="text" id="location" name="location"><br>
+
+		<label for="description">Description:</label><br>
+		<textarea id="description" name="description" rows="4" cols="50"></textarea><br>
+
+		<input type="submit" value="Create">
+	</form>
+
+	<h2>Upcoming events</h2>
+	<ul id="events-list">
+		<!-- This is where we will display the upcoming events -->
+	</ul>
+
+	<script>
+		// This function sends a POST request to the server to create a new event
+		function createEvent(title, date, time, location, description) {
+			fetch('http://localhost:3000/events', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					title: title,
+					date: date,
+					time: time,
+					location: location,
+					description: description
+				}),
+				mode: 'no-cors'
+			})
+			.then(response => {
+				if (response.ok) {
+					return response.json();
+				} else {
+					throw new Error('Failed to create event');
+				}
+			})
+			.then(data => {
+				// Display the new event in the list
+				displayEvent(data);
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		}
+
+		// This function displays a single event in the list
+		function displayEvent(event) {
+			const listItem = document.createElement('li');
+			listItem.innerHTML = `
+				<h3>${event.title}</h3>
+				<p>Date: ${event.date}</p>
+				<p>Time: ${event.time}</p>
+				<p>Location: ${event.location}</p>
+				<p>Description: ${event.description}</p>
+				<button data-id="${event.id}" class="join-button">Join</button>
+			`;
+			document.getElementById('events-list').appendChild(listItem);
+		}
+
+		// This function sends a POST request to the server to join an event
+		function joinEvent(eventId) {
+			fetch(`http://localhost:3000/events/${eventId}/join`, {
+				method: 'POST'
+			})
+			.then(response => {
+				if (response.ok) {
+					alert('You have joined the event!');
+				} else {
+					throw new Error('Failed to join event');
+				}
+			})
+			.catch(error => {
+				console.error(error);
+			});
+		}
+
+		// Add a listener for the form submit event
+        document.querySelector('form').addEventListener('submit', event => {
+            event.preventDefault();
+
+            // Get the values of the form fields
+            const title = document.getElementById('title').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+
+            // Call createEvent function with the form data
+            createEvent(title, date, time, location, description);
+        });
+	</script>
+</body>
+</html>      
+
