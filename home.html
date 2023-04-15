@@ -46,16 +46,20 @@
 					location: location,
 					description: description
 				}),
-				mode: 'no-cors'
+				mode: 'cors'
 			})
 			.then(response => {
-				if (response.ok) {
-					return response.json();
-				} else {
-					throw new Error('Failed to create event');
-				}
+				console.log(response.status);
+				return response.json();
+				// if (response.ok) {
+				// 	console.log("receive response");
+				// 	return response.json();
+				// } else {
+				// 	throw new Error('Failed to create event');
+				// }
 			})
 			.then(data => {
+				console.log("begain to display");
 				// Display the new event in the list
 				displayEvent(data);
 			})
