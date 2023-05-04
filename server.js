@@ -34,6 +34,9 @@ server.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
 
+const cors = require('cors');
+app.use(cors());
+  
 // Create a new event
 app.post('/events', (req, res) => {
     console.log('Received a create event request');
